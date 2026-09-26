@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prebuild": "node scripts/scrape-events.mjs && node scripts/import-news.mjs",
     "start": "next start",
     "scrape:events": "node scripts/scrape-events.mjs",
     "import:overture": "node scripts/import-overture.mjs",

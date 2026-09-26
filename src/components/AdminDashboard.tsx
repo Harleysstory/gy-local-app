@@ -60,6 +60,7 @@ export default function AdminDashboard() {
   const [notes, setNotes] = useState<NoteRow[]>([]);
   const [favIds, setFavIds] = useState<string[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [refreshMsg, setRefreshMsg] = useState("");
 
   const load = useCallback(async () => {
     const [st, p, a, r, n, f, m] = await Promise.all([
@@ -446,6 +447,36 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
+      </section>
+
+      {/* Refresh data */}
+      <section className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-900 p-4 ring-1 ring-slate-800">
+        <button
+          onClick={async () => {
+            setBusy("refresh");
+            try {
+              const r = await fetch("/api/refresh");
+              const j = await r.json();
+              setRefreshMsg(j.ok ? j.message : j.error ?? "Could not trigger refresh.");
+            } catch {
+              setRefreshMsg("Could not trigger refresh.");
+            } finally {
+              setBusy("");
+              setTimeout(() => setRefreshMsg(""), 6000);
+            }
+          }}
+          disabled={busy === "refresh"}
+          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-50"
+        >
+          {busy === "refresh" ? "Triggering…" : "🔄 Refresh data now"}
+        </button>
+        <p className="text-xs text-slate-400">
+          Events &amp; news are scraped at build time, and the Vercel cron
+          refreshes them every morning automatically (max once per 6h).
+        </p>
+        {refreshMsg && (
+          <span className="text-xs text-sky-400">{refreshMsg}</span>
+        )}
       </section>
 
       {/* Quick links */}

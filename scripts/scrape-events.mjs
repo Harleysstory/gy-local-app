@@ -123,4 +123,14 @@ async function main() {
   console.log(`Wrote ${dest}`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  // During builds (Vercel prebuild), a failed scrape must never break the
+  // deploy — fall back to the existing committed events.json.
+  const dest = path.resolve("src/data/events.json");
+  if (fs.existsSync(dest)) {
+    console.warn(`\n⚠ Scrape failed (${e.message}) — keeping the existing events.json. Build continues.`);
+    process.exit(0);
+  }
+  console.error(e);
+  process.exit(1);
+});

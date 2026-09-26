@@ -82,4 +82,14 @@ async function main() {
   console.log(`Wrote ${dest}`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  // During builds (Vercel prebuild), a failed fetch must never break the
+  // deploy — fall back to the existing committed news.json.
+  const dest = path.resolve("src/data/news.json");
+  if (fs.existsSync(dest)) {
+    console.warn(`\n⚠ News import failed (${e.message}) — keeping the existing news.json. Build continues.`);
+    process.exit(0);
+  }
+  console.error(e);
+  process.exit(1);
+});

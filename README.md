@@ -141,12 +141,27 @@ Each is a 1–3 evening job once the steps below are done:
 
 ## 6. Putting it online (free, when you're ready)
 
-**Easiest — Vercel (recommended first deploy):**
+**Easiest — Vercel (DONE, 26 Sep 2026):** the app is LIVE at
+**https://gy-local-app-bradford-independent.vercel.app**
+(account: harleysstory, project: gy-local-app, team: bradford-independent;
+the 4 secrets are set as Vercel Production env vars)
+
+Redeploying after local changes / data refreshes:
 
 ```powershell
-npm install -g vercel
-vercel          # follow prompts, free hobby tier
+npm run scrape:events   # etc. — refresh the src/data files first
+vercel --prod          # uploads and rebuilds
 ```
+
+Deploy notes for posterity:
+- New Hobby accounts default to Vercel Authentication (SSO) on ALL urls —
+  it was disabled via the API (`ssoProtection: null` on the project), which
+  is why the site is public
+- The deployment-specific url (gy-local-<hash>…vercel.app) stays SSO-walled
+  by design (that's Vercel protecting preview-like URLs) — always share the
+  production alias
+- First deploy: `npm install -g vercel`, `vercel login`, `vercel link --yes`,
+  `vercel env add NAME production` for each secret, `vercel deploy --prod`
 
 Your app is live in ~2 minutes on a `*.vercel.app` URL. Push to GitHub and it
 redeploys automatically. Note: for server-side state (notes, favourites)
