@@ -84,14 +84,21 @@ export async function GET(req: Request) {
   const rows = subsRs.rows as unknown as { endpoint: string; subscription: string; bin_config: string | null }[];
   if (rows.length === 0) {
     const preview = await composeBrief(null);
-    return Response.json({ ok: true, sent: 0, subscribers: 0, preview: preview.body });
+    return Response.json({
+      ok: true, sent: 0, subscribers: 0,
+      preview: preview.body, title: preview.title, body: preview.body,
+    });
   }
 
-  // Dry: compose one example and return it
+  // Dry: compose one example and return it (full payload so the admin
+  // tester can render the notification exactly as a subscriber would see it)
   if (dry) {
     const bin = rows[0].bin_config ? (JSON.parse(rows[0].bin_config) as BinConfig) : null;
     const preview = await composeBrief(bin);
-    return Response.json({ ok: true, sent: 0, subscribers: rows.length, preview: preview.body });
+    return Response.json({
+      ok: true, sent: 0, subscribers: rows.length,
+      preview: preview.body, title: preview.title, body: preview.body,
+    });
   }
 
   let sent = 0;

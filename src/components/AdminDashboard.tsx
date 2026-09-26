@@ -60,6 +60,11 @@ export default function AdminDashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [refreshMsg, setRefreshMsg] = useState("");
   const [importMsg, setImportMsg] = useState("");
+  const [briefTest, setBriefTest] = useState<{
+    title: string;
+    body: string;
+    subscribers: number;
+  } | null>(null);
 
   const load = useCallback(async () => {
     const [st, p, a, r, m] = await Promise.all([
@@ -518,13 +523,72 @@ export default function AdminDashboard() {
         >
           {busy === "brief" ? "Sending…" : "🔔 Send town brief now"}
         </button>
+        <button
+          onClick={async () => {
+            setBusy("brieftest");
+            setBriefTest(null);
+            try {
+              const r = await fetch("/api/push/brief?dry=1");
+              const j = await r.json();
+              if (j.ok) {
+                setBriefTest({ title: j.title, body: j.body, subscribers: j.subscribers });
+              } else {
+                setRefreshMsg(j.error ?? "Could not compose brief.");
+                setTimeout(() => setRefreshMsg(""), 8000);
+              }
+            } catch {
+              setRefreshMsg("Could not compose brief.");
+              setTimeout(() => setRefreshMsg(""), 8000);
+            } finally {
+              setBusy("");
+            }
+          }}
+          disabled={busy === "brieftest"}
+          className="rounded-lg bg-slate-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-600 disabled:opacity-50"
+        >
+          {busy === "brieftest" ? "Composing…" : "🔍 Test today's brief"}
+        </button>
         <p className="max-w-md text-xs text-slate-400">
           Data refreshes every morning at 06:20 UTC (scraped at build time);
-          the town brief goes to push subscribers at 06:30 UTC — or force it
-          here to test.
+          the town brief goes to push subscribers at 06:30 UTC — force it here
+          to send, or run a test to preview it without sending.
         </p>
         {refreshMsg && (
           <span className="text-xs text-sky-400">{refreshMsg}</span>
+        )}
+        {briefTest && (
+          <div className="w-full">
+            {/* Phone-style notification mockup: what a subscriber sees */}
+            <div className="mx-auto w-full max-w-sm rounded-2xl bg-slate-800/95 p-3 ring-1 ring-slate-700 shadow-lg">
+              <div className="flex items-start gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/icon.png"
+                  alt=""
+                  className="mt-0.5 h-9 w-9 rounded-xl"
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                      GY LOCAL
+                    </span>
+                    <span className="text-[11px] text-slate-500">now</span>
+                  </div>
+                  <p className="mt-0.5 text-sm font-semibold text-white">
+                    {briefTest.title}
+                  </p>
+                  <p className="text-sm leading-snug text-slate-200">
+                    {briefTest.body}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p className="mx-auto mt-2 max-w-sm text-center text-xs text-slate-400">
+              Live compose — {briefTest.subscribers} subscriber
+              {briefTest.subscribers === 1 ? "" : "s"} would receive this
+              right now. Nothing was sent.
+            </p>
+          </div>
         )}
       </section>
 
