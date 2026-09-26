@@ -149,6 +149,12 @@ export default async function Home() {
         <div className="rounded-2xl bg-slate-900 p-5 ring-1 ring-slate-800">
           <h2 className="font-semibold">🔔 Town alerts</h2>
           <AlertsCard />
+          <Link
+            href="/alerts"
+            className="mt-3 inline-block text-xs text-sky-400 hover:text-sky-300"
+          >
+            See what&apos;s in the daily brief →
+          </Link>
         </div>
 
         <div className="rounded-2xl bg-slate-900 p-5 ring-1 ring-slate-800">

@@ -18,6 +18,7 @@ const NAV = [
   { href: "/events", label: "Events" },
   { href: "/news", label: "News" },
   { href: "/about", label: "About" },
+  { href: "/alerts", label: "🔔" },
 ];
 
 export default function RootLayout({
@@ -47,7 +48,11 @@ export default function RootLayout({
                 <Link
                   key={href}
                   href={href}
-                  className="rounded-lg px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-slate-800/80 hover:text-white sm:px-3 sm:text-sm"
+                  title={label === "🔔" ? "Get the daily town brief" : undefined}
+                  aria-label={label === "🔔" ? "Get the daily town brief" : undefined}
+                  className={`rounded-lg px-2.5 py-1.5 text-xs transition hover:bg-slate-800/80 hover:text-white sm:px-3 sm:text-sm ${
+                    label === "🔔" ? "text-sky-400" : "text-slate-300"
+                  }`}
                 >
                   {label}
                 </Link>

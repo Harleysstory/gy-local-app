@@ -1,3 +1,4 @@
+import Link from "next/link";
 import EventCard from "@/components/EventCard";
 import type { LocalEvent } from "@/lib/events";
 import {
@@ -70,6 +71,17 @@ export default function EventsPage() {
           · re-run <code>npm run scrape:events</code> for the latest
         </p>
       </div>
+
+      <section className="rounded-2xl bg-sky-500/10 p-4 ring-1 ring-sky-500/30">
+        <p className="text-sm text-slate-200">
+          Never miss what&apos;s on — the{" "}
+          <Link href="/alerts" className="font-semibold text-sky-400 underline hover:text-sky-300">
+            free morning brief 🔔
+          </Link>{" "}
+          lands on your phone at ~7:30am with today&apos;s events, weather and
+          tides.
+        </p>
+      </section>
 
       <Section title="Today" items={todayEvents} />
       <Section title="This weekend" items={weekendEvents} />

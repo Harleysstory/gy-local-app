@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-26T20:15:43.594Z",
+  "fetchedAt": "2026-09-26T20:20:19.875Z",
   "items": [
     {
       "id": "CBMiqgFBVV95cUxNekY0d3VaMDJaQzcwRWtuM01GQm0xNWpTRmtDdjBpcGtXRDFxOUNlcWNpOWs1M0pEbUotTDFMNFp3MnlReVBMM1FiMkFPVzlES2xiS0Z3VGNDc2RHQ0lPX05xeVhjTTl2bVZpVFhMMlo1eDE1bW9hWTZScUZfcGhtSkxqOE93bWF1ci0xUGJ4MndCUjRSRlRvSjlTWno5TFNFSFZUY1k5Y0Jjdw",
@@ -234,14 +234,6 @@
       "published": "2026-09-21T10:11:00.000Z"
     },
     {
-      "id": "CBMirAFBVV95cUxQd2ZTZlhrUVh0SjJ5YmYwQXhTTHlTb2ZGMEVDWDhsOEhwNFJpd04zT3dIOFREaE94NnNpRVZHM2x2ZWF4cnhJXzcyaHZPTWJucnR1ZkJ0VUhieEdNbTg4Sl93MWltUlJINm4zLUJYT0FWNFJ2eUZWdlVkcFdQTnJjTWFkM0t2VzM0OS1NWFZYaXRLdm5adDNoOEstRkZReDdhMGNTV21tckpNSkFE",
-      "title": "Two new maisonette flats to be created in Norfolk town after plans approved",
-      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQd2ZTZlhrUVh0SjJ5YmYwQXhTTHlTb2ZGMEVDWDhsOEhwNFJpd04zT3dIOFREaE94NnNpRVZHM2x2ZWF4cnhJXzcyaHZPTWJucnR1ZkJ0VUhieEdNbTg4Sl93MWltUlJINm4zLUJYT0FWNFJ2eUZWdlVkcFdQTnJjTWFkM0t2VzM0OS1NWFZYaXRLdm5adDNoOEstRkZReDdhMGNTV21tckpNSkFE?oc=5",
-      "source": "Great Yarmouth Mercury",
-      "source_url": "https://www.greatyarmouthmercury.co.uk",
-      "published": "2026-09-21T09:44:00.000Z"
-    },
-    {
       "id": "CBMipAFBVV95cUxPeG5QY1VGMUc1YTNlYWREMkJIendldFlBLXo3d0hBQ3Ztd1ZTdEZEczRTOGRFdTZOQWZMZkpkMWR6LU96RWkzVzZPYXI1VFJRQXBlZjZfdTNPN0tzXzhNQWJmU0ZQUF9QZUd1ZTBKamU5dzZES0loUGRPakUtbHFpZ1V2WExhU1ZRVnpHUVY1V0hzZTB3cGxxMFZtX0VUUExocGRuZg",
       "title": "Rebuild for SECOND Norfolk hospital delayed",
       "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPeG5QY1VGMUc1YTNlYWREMkJIendldFlBLXo3d0hBQ3Ztd1ZTdEZEczRTOGRFdTZOQWZMZkpkMWR6LU96RWkzVzZPYXI1VFJRQXBlZjZfdTNPN0tzXzhNQWJmU0ZQUF9QZUd1ZTBKamU5dzZES0loUGRPakUtbHFpZ1V2WExhU1ZRVnpHUVY1V0hzZTB3cGxxMFZtX0VUUExocGRuZg?oc=5",
@@ -288,6 +280,14 @@
       "source": "East Anglia Bylines",
       "source_url": "https://eastangliabylines.co.uk",
       "published": "2026-09-19T17:32:58.000Z"
+    },
+    {
+      "id": "CBMiowFBVV95cUxOQmJqcVAxSkJicG1BMjBIbU52ZGJabmpLMTdRelF4TTFDcGV1b2hjRUYwNURHTDJrX1lFR0ZmSXBBWFpvZDZWWTdJajA3WGNweG5FcFRqc3QwSi1yOUFkdWRwUWRYVUVVa2hjd2NHdWE3ek9MS0g2Y0hqY09FOXRSZFotRzRMRW9HR3RxTkFrU21uNEcyTzBLQ1pScm9sZ25scl9R",
+      "title": "Fly-tipped rubbish cleared after threatening to hide village sign",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOQmJqcVAxSkJicG1BMjBIbU52ZGJabmpLMTdRelF4TTFDcGV1b2hjRUYwNURHTDJrX1lFR0ZmSXBBWFpvZDZWWTdJajA3WGNweG5FcFRqc3QwSi1yOUFkdWRwUWRYVUVVa2hjd2NHdWE3ek9MS0g2Y0hqY09FOXRSZFotRzRMRW9HR3RxTkFrU21uNEcyTzBLQ1pScm9sZ25scl9R?oc=5",
+      "source": "Great Yarmouth Mercury",
+      "source_url": "https://www.greatyarmouthmercury.co.uk",
+      "published": "2026-09-19T08:00:00.000Z"
     },
     {
       "id": "CBMimgFBVV95cUxPM2xRS09OdnBoOTVGOU1zWkNYdEhBTXlsb2NxZUk5QlpHdVlxOHZkM3Uwb3FHbzFGZEFvRnFHdDRZTC1UWjJIamduTk5KbUdZVG45M1NMVEhaLWxkczVPZUNaaFBmUVlvVUV0S2RGc1hiWk9QdWxhZU5pU0NjWGdodm02eWl5ZTFpVWNuQTVNM212eEdYc0ViZUFR",
