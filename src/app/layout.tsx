@@ -17,6 +17,7 @@ const NAV = [
   { href: "/map", label: "Map" },
   { href: "/events", label: "Events" },
   { href: "/news", label: "News" },
+  { href: "/about", label: "About" },
 ];
 
 export default function RootLayout({
@@ -90,6 +91,12 @@ export default function RootLayout({
               — business analysis, service design &amp; UX · Great Yarmouth
             </div>
             <div className="mt-4 flex justify-center gap-3">
+              <Link
+                href="/about"
+                className="inline-block rounded-lg bg-slate-800 px-4 py-1.5 text-xs font-medium text-slate-300 ring-1 ring-slate-700 transition hover:text-white hover:ring-sky-500"
+              >
+                ℹ️ About
+              </Link>
               <Link
                 href="/contact"
                 className="inline-block rounded-lg bg-slate-800 px-4 py-1.5 text-xs font-medium text-slate-300 ring-1 ring-slate-700 transition hover:text-white hover:ring-sky-500"
