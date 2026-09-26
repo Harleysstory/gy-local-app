@@ -121,12 +121,21 @@ export default async function Home() {
                   Best beach walk: ±2h around {londonTime(nextLow.time)}
                 </p>
               )}
+              {tides.stale && tides.fetchedAt && (
+                <p className="text-[11px] text-amber-400/90">
+                  ⚠ cached · fetched{" "}
+                  {Math.max(1, Math.round((Date.now() - new Date(tides.fetchedAt).getTime()) / 3_600_000))}h ago — live
+                  quota resets daily
+                </p>
+              )}
             </div>
           ) : (
             <p className="mt-2 text-xs text-slate-500">
-              {tides.ok
-                ? "No upcoming extremes right now."
-                : "Tides unavailable — set STORMGLASS_API_KEY in .env.local"}
+              {tides.keyMissing
+                ? "Tides unavailable — set STORMGLASS_API_KEY in .env.local"
+                : tides.ok
+                  ? "No upcoming tides in the cached window — back with the next refresh."
+                  : "Tide data temporarily unavailable (free-tier quota or service) — the morning refresh refills it."}
             </p>
           )}
         </div>
