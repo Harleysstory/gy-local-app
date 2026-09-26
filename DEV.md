@@ -29,9 +29,18 @@ Same five exist as Vercel Production env vars (`vercel env ls`).
 
 ## Architecture rules (don't break these)
 
-1. **World data** (places/events/news) lives in `src/data/*.json`, baked at
-   build; **your data** (notes/favourites/manual places/messages/settings)
-   lives in Turso. Re-running imports can therefore never clobber notes.
+1. **Three layers of data** (changed 26 Sep 2026 to the community model):
+   - **World data** (Overture places/events/news): `src/data/*.json`, baked at
+     build — re-running imports can never clobber anything personal.
+   - **Personal data** (notes, ratings, favourites, bin-day config): each
+     visitor's browser, via `src/lib/localStore.ts`. Never sent to any server.
+     No accounts — the trade-off is per-device data (a browser clear loses it).
+   - **Public/shared data** (community-submitted places, contact messages,
+     tides cache, refresh limiter): Turso. Map contributions are moderated
+     (pending → approve → public).
+   The Turso `notes`/`favourites` tables are a LEGACY archive — the owner's
+   one-time import button on the admin dashboard reads them; after importing,
+   they can be dropped.
 2. Scrapers must never break the build — on failure they keep the existing
    JSON and exit 0 (verified in `scripts/*` `main().catch`).
 3. Auth = one password → HttpOnly session cookie (30 days), derived token in

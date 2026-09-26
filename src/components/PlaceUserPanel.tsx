@@ -1,144 +1,52 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-
-type Note = {
-  place_id: string;
-  rating: number | null;
-  tags: string | null;
-  body: string | null;
-  updated_at?: string;
-};
+import { useState } from "react";
+import {
+  getNote,
+  setNote as saveNoteLocal,
+  deleteNote as deleteNoteLocal,
+  isFavourite,
+  toggleFavourite,
+} from "@/lib/localStore";
 
 /**
- * Your personal notes + favourite for a place — the "make it yours" panel.
- * Owner-only: visitors see a locked state instead (client side stays open).
- * Talks to /api/places/<id>/note and /api/favourites.
+ * The personal layer — YOUR rating, tags, note & favourite for a place.
+ * Everything is stored in this browser (localStorage): no account, never
+ * sent anywhere. Works for every visitor, works offline.
  */
 export default function PlaceUserPanel({ placeId }: { placeId: string }) {
-  const [authed, setAuthed] = useState<boolean | null>(null);
-  const [note, setNote] = useState<Note | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [dbDown, setDbDown] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [note, setNote] = useState(() => getNote(placeId));
+  const [rating, setRating] = useState<number | null>(() => getNote(placeId)?.rating ?? null);
+  const [tags, setTags] = useState(() => getNote(placeId)?.tags ?? "");
+  const [body, setBody] = useState(() => getNote(placeId)?.body ?? "");
+  const [favourite, setFavourite] = useState(() => isFavourite(placeId));
   const [saved, setSaved] = useState(false);
-  const [favourite, setFavourite] = useState(false);
 
-  const [rating, setRating] = useState<number | null>(null);
-  const [tags, setTags] = useState("");
-  const [body, setBody] = useState("");
-
-  useEffect(() => {
-    let alive = true;
-    fetch("/api/auth/session")
-      .then((r) => r.json())
-      .then((j) => alive && setAuthed(!!j.authed))
-      .catch(() => alive && setAuthed(false));
-    (async () => {
-      try {
-        const r = await fetch(`/api/places/${placeId}/note`);
-        if (r.status === 503) { if (alive) { setDbDown(true); setLoading(false); } return; }
-        const n = await r.json();
-        if (!alive) return;
-        setNote(n);
-        setRating(n?.rating ?? null);
-        setTags(n?.tags ?? "");
-        setBody(n?.body ?? "");
-      } catch {
-        if (alive) setDbDown(true);
-      } finally {
-        if (alive) setLoading(false);
-      }
-      try {
-        const fr = await fetch("/api/favourites");
-        if (fr.ok) {
-          const ids: string[] = await fr.json();
-          if (alive) setFavourite(ids.includes(placeId));
-        }
-      } catch { /* non-fatal */ }
-    })();
-    return () => { alive = false; };
-  }, [placeId]);
-
-  const save = async () => {
-    setSaving(true);
-    setSaved(false);
-    try {
-      const r = await fetch(`/api/places/${placeId}/note`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating, tags, body }),
-      });
-      if (r.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
-    } finally {
-      setSaving(false);
-    }
+  const save = () => {
+    saveNoteLocal(placeId, { rating, tags, body });
+    setNote({ rating, tags, body, updatedAt: new Date().toISOString() });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
   };
 
-  const removeNote = async () => {
-    setSaving(true);
-    try {
-      const r = await fetch(`/api/places/${placeId}/note`, { method: "DELETE" });
-      if (r.ok) { setNote(null); setRating(null); setTags(""); setBody(""); }
-    } finally {
-      setSaving(false);
-    }
+  const remove = () => {
+    deleteNoteLocal(placeId);
+    setNote(null);
+    setRating(null);
+    setTags("");
+    setBody("");
   };
 
-  const toggleFavourite = async () => {
-    const next = !favourite;
-    setFavourite(next);
-    try {
-      if (next) {
-        await fetch("/api/favourites", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ place_id: placeId }),
-        });
-      } else {
-        await fetch(`/api/favourites/${placeId}`, { method: "DELETE" });
-      }
-    } catch {
-      setFavourite(!next); // revert on failure
-    }
+  const toggle = () => {
+    setFavourite(toggleFavourite(placeId));
   };
-
-  if (authed === null || loading)
-    return <p className="text-sm text-slate-500">Loading your notes…</p>;
-
-  if (authed === false) {
-    return (
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-slate-800/60 px-4 py-3 ring-1 ring-slate-700">
-        <p className="text-xs text-slate-400">
-          🔒 The owner&apos;s notes &amp; ratings are private — sign in to add yours.
-        </p>
-        <Link
-          href="/login"
-          className="shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-sky-400 ring-1 ring-slate-700 hover:ring-sky-500"
-        >
-          Owner login →
-        </Link>
-      </div>
-    );
-  }
-
-  if (dbDown) {
-    return (
-      <p className="text-sm text-slate-500">
-        Database not configured — set{" "}
-        <code>TURSO_DATABASE_URL</code> and <code>TURSO_AUTH_TOKEN</code> in{" "}
-        <code>.env.local</code> (see README §5).
-      </p>
-    );
-  }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Your take</h2>
         <button
-          onClick={toggleFavourite}
+          onClick={toggle}
           className={`rounded-full px-4 py-1.5 text-sm ring-1 transition ${
             favourite
               ? "bg-pink-500 text-white ring-pink-500"
@@ -202,22 +110,25 @@ export default function PlaceUserPanel({ placeId }: { placeId: string }) {
       <div className="flex items-center gap-3">
         <button
           onClick={save}
-          disabled={saving}
-          className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500 disabled:opacity-50"
+          className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500"
         >
-          {saving ? "Saving…" : "Save"}
+          Save
         </button>
         {note && (
           <button
-            onClick={removeNote}
-            disabled={saving}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-slate-300 ring-1 ring-slate-800 transition hover:ring-red-400 disabled:opacity-50"
+            onClick={remove}
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-slate-300 ring-1 ring-slate-800 transition hover:ring-red-400"
           >
             Delete note
           </button>
         )}
         {saved && <span className="text-sm text-emerald-400">Saved ✓</span>}
       </div>
+
+      <p className="text-[11px] text-slate-500">
+        🔒 Saved on this device only — notes are yours alone, stored in your
+        browser, never sent to any server.
+      </p>
     </div>
   );
 }

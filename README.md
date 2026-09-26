@@ -21,7 +21,7 @@
 | | Feature |
 |---|---|
 | 🗺️ | **A map of 2,184 places** across Yarmouth & Gorleston — every business/POI from Overture Maps, colour-coded by industry, searchable, with filters |
-| ⭐ | **Your own layer** — ratings, tags and notes on any place, favourites, and places *you* add that Overture missed (submitted → approved → pinned with a star) |
+| ⭐ | **A personal layer that stays yours** — ratings, tags, notes and favourites on any place, saved **on your own device** (no account, no tracking, never uploaded). And places *anyone* adds to the map go through moderation → public for all |
 | 🗓️ | **What's on** — events scraped from Visit Great Yarmouth, grouped by Today / This weekend / Coming up, with one-tap `.ics` calendar downloads |
 | 📰 | **Local news** — ~100 articles from the Mercury, EDP24, BBC and 20+ outlets, with read-tracking |
 | 🌊 | **A town dashboard** — live weather + rain nowcast ("easing around 14:20"), seafront tides, sunset & golden hour (with a low-tide-near-sunset beach-walk alert), and a bin-day helper that knows the black/green alternation |

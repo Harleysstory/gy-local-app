@@ -5,6 +5,14 @@ import { useCallback, useEffect, useState } from "react";
 import placesJson from "@/data/imported-places.json";
 import eventsJson from "@/data/events.json";
 import newsJson from "@/data/news.json";
+import {
+  allNotes,
+  allFavourites,
+  deleteNote as deleteNoteLocal,
+  toggleFavourite,
+  mergeFromServer,
+  type PersonalNote,
+} from "@/lib/localStore";
 
 type ManualPlace = {
   id: string;
@@ -20,18 +28,8 @@ type ManualPlace = {
   created_at: string;
 };
 
-type NoteRow = {
-  place_id: string;
-  rating: number | null;
-  tags: string | null;
-  body: string | null;
-  updated_at?: string;
-};
-
 type Stats = {
   places: { pending: number; approved: number; rejected: number };
-  notes: number;
-  favourites: number;
   unread_messages: number;
 };
 
@@ -57,28 +55,28 @@ export default function AdminDashboard() {
   const [pending, setPending] = useState<ManualPlace[]>([]);
   const [approved, setApproved] = useState<ManualPlace[]>([]);
   const [rejected, setRejected] = useState<ManualPlace[]>([]);
-  const [notes, setNotes] = useState<NoteRow[]>([]);
+  const [notes, setNotes] = useState<Record<string, PersonalNote>>({});
   const [favIds, setFavIds] = useState<string[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [refreshMsg, setRefreshMsg] = useState("");
+  const [importMsg, setImportMsg] = useState("");
 
   const load = useCallback(async () => {
-    const [st, p, a, r, n, f, m] = await Promise.all([
+    const [st, p, a, r, m] = await Promise.all([
       fetch("/api/admin/stats").then((x) => x.json()),
       fetch("/api/places?status=pending").then((x) => x.json()),
       fetch("/api/places?status=approved").then((x) => x.json()),
       fetch("/api/places?status=rejected").then((x) => x.json()),
-      fetch("/api/notes").then((x) => (x.ok ? x.json() : [])),
-      fetch("/api/favourites").then((x) => (x.ok ? x.json() : [])),
       fetch("/api/contact/messages").then((x) => (x.ok ? x.json() : [])),
     ]);
     setStats(st.error ? null : st);
     setPending(Array.isArray(p) ? p : []);
     setApproved(Array.isArray(a) ? a : []);
     setRejected(Array.isArray(r) ? r : []);
-    setNotes(Array.isArray(n) ? (n as NoteRow[]) : []);
-    setFavIds(Array.isArray(f) ? (f as string[]) : []);
     setMessages(Array.isArray(m) ? (m as Message[]) : []);
+    // Personal layer — this browser's local data (no server involved):
+    setNotes(allNotes());
+    setFavIds(allFavourites());
   }, []);
 
   useEffect(() => {
@@ -104,13 +102,8 @@ export default function AdminDashboard() {
   }
 
   async function deleteNote(placeId: string) {
-    setBusy("note-" + placeId);
-    try {
-      await fetch(`/api/places/${placeId}/note`, { method: "DELETE" });
-      await load();
-    } finally {
-      setBusy("");
-    }
+    deleteNoteLocal(placeId);
+    setNotes(allNotes());
   }
 
   async function toggleMessageRead(m: Message) {
@@ -138,12 +131,30 @@ export default function AdminDashboard() {
   }
 
   async function deleteFav(placeId: string) {
-    setBusy("fav-" + placeId);
+    toggleFavourite(placeId);
+    setFavIds(allFavourites());
+  }
+
+  /** One-time: bring the old server-side notes/favourites into this device */
+  async function importServerData() {
+    setBusy("import");
+    setImportMsg("");
     try {
-      await fetch(`/api/favourites/${placeId}`, { method: "DELETE" });
-      await load();
+      const [rows, favs] = await Promise.all([
+        fetch("/api/notes").then((x) => (x.ok ? x.json() : [])),
+        fetch("/api/favourites").then((x) => (x.ok ? x.json() : [])),
+      ]);
+      const n = mergeFromServer(rows, favs);
+      setNotes(allNotes());
+      setFavIds(allFavourites());
+      setImportMsg(
+        `Imported ${n} note${n === 1 ? "" : "s"} and your favourites from the old server — local to this device now.`
+      );
+    } catch {
+      setImportMsg("Import failed — try again.");
     } finally {
       setBusy("");
+      setTimeout(() => setImportMsg(""), 8000);
     }
   }
 
@@ -259,10 +270,10 @@ export default function AdminDashboard() {
       {/* Stats */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard icon="⏳" value={stats?.places.pending ?? null} label="Pending places" />
-        <StatCard icon="⭐" value={stats?.places.approved ?? null} label="Your places on map" />
+        <StatCard icon="⭐" value={stats?.places.approved ?? null} label="Community places" />
         <StatCard icon="✉️" value={stats?.unread_messages ?? null} label="Unread contact" />
-        <StatCard icon="📝" value={stats?.notes ?? null} label="Notes & ratings" />
-        <StatCard icon="♥" value={stats?.favourites ?? null} label="Favourites" />
+        <StatCard icon="📝" value={Object.keys(notes).length} label="My notes (this device)" />
+        <StatCard icon="♥" value={favIds.length} label="My favourites" />
         <StatCard icon="🗓️" value={eventCount} label="Events loaded" />
         <StatCard icon="📰" value={newsCount} label="News articles" />
       </section>
@@ -380,23 +391,38 @@ export default function AdminDashboard() {
         )}
       </section>
 
-      {/* Your data */}
-      <section className="grid gap-6 lg:grid-cols-2">
+      {/* My data — stored in THIS browser (the personal layer is device-local) */}
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-800/60 p-3 ring-1 ring-slate-700">
+          <p className="max-w-lg text-xs text-slate-400">
+            📱 Notes &amp; favourites live in <b>this browser</b> — no accounts,
+            nothing sent to a server, same as every visitor&apos;s device.
+          </p>
+          <button
+            onClick={importServerData}
+            disabled={busy === "import"}
+            className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-medium text-sky-400 ring-1 ring-slate-700 transition hover:ring-sky-500 disabled:opacity-40"
+          >
+            {busy === "import" ? "Importing…" : "⬇ Import my old server data (one-time)"}
+          </button>
+          {importMsg && <span className="text-xs text-emerald-400">{importMsg}</span>}
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
         <div>
           <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">
-            📝 Notes ({notes.length})
+            📝 My notes ({Object.keys(notes).length})
           </h3>
-          {notes.length === 0 ? (
-            <p className="text-xs text-slate-500">No notes yet.</p>
+          {Object.keys(notes).length === 0 ? (
+            <p className="text-xs text-slate-500">No notes on this device yet.</p>
           ) : (
             <div className="space-y-2">
-              {notes.map((n) => (
+              {Object.entries(notes).map(([placeId, n]) => (
                 <div
-                  key={n.place_id}
+                  key={placeId}
                   className="flex items-start justify-between gap-3 rounded-xl bg-slate-900 p-3 ring-1 ring-slate-800"
                 >
                   <div className="min-w-0">
-                    <div className="text-sm font-medium">{nameOf(n.place_id)}</div>
+                    <div className="text-sm font-medium">{nameOf(placeId)}</div>
                     <div className="text-xs text-slate-400">
                       {typeof n.rating === "number" && "★".repeat(n.rating)}
                       {n.tags ? ` · ${n.tags}` : ""}
@@ -409,11 +435,10 @@ export default function AdminDashboard() {
                     )}
                   </div>
                   <button
-                    onClick={() => deleteNote(n.place_id)}
-                    disabled={busy === "note-" + n.place_id}
-                    className="shrink-0 rounded-lg bg-slate-800 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700 transition hover:ring-red-400 disabled:opacity-40"
+                    onClick={() => deleteNote(placeId)}
+                    className="shrink-0 rounded-lg bg-slate-800 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700 transition hover:ring-red-400"
                   >
-                    {busy === "note-" + n.place_id ? "…" : "delete"}
+                    delete
                   </button>
                 </div>
               ))}
@@ -437,15 +462,15 @@ export default function AdminDashboard() {
                   <div className="min-w-0 truncate text-sm">{nameOf(id)}</div>
                   <button
                     onClick={() => deleteFav(id)}
-                    disabled={busy === "fav-" + id}
-                    className="shrink-0 rounded-lg bg-slate-800 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700 transition hover:ring-red-400 disabled:opacity-40"
+                    className="shrink-0 rounded-lg bg-slate-800 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700 transition hover:ring-red-400"
                   >
-                    {busy === "fav-" + id ? "…" : "remove"}
+                    remove
                   </button>
                 </div>
               ))}
             </div>
           )}
+        </div>
         </div>
       </section>
 

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { places } from "@/lib/places";
 import type { Place } from "@/lib/places";
 import { categoryCounts, metaFor } from "@/lib/categories";
+import { loadPersonal, type PersonalNote } from "@/lib/localStore";
 
 // Leaflet needs `window`, so the map must never render on the server:
 const MapView = dynamic(() => import("@/components/MapView"), {
@@ -17,34 +18,19 @@ const MapView = dynamic(() => import("@/components/MapView"), {
 
 const LIST_CAP = 60; // keep the DOM list light; the map shows everything
 
-type NoteRow = {
-  place_id: string;
-  rating: number | null;
-  tags: string | null;
-  body: string | null;
-};
-
 export default function MapPage() {
   const [selected, setSelected] = useState<string | null>(null); // null = all
   const [search, setSearch] = useState("");
-  const [notes, setNotes] = useState<Record<string, NoteRow>>({});
+  const [notes, setNotes] = useState<Record<string, PersonalNote>>({});
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
-  const [userPlaces, setUserPlaces] = useState<Place[]>([]); // your approved manual places
+  const [userPlaces, setUserPlaces] = useState<Place[]>([]); // community-approved places
 
-  // Merge your personal data (notes/favourites) in when the DB is reachable:
+  // Personal layer: this visitor's notes/favourites — browser-local, never
+  // sent anywhere. Public layer: community-approved places come from server:
   useEffect(() => {
-    fetch("/api/notes")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((rows: NoteRow[]) => {
-        const m: Record<string, NoteRow> = {};
-        for (const row of rows) m[row.place_id] = row;
-        setNotes(m);
-      })
-      .catch(() => {});
-    fetch("/api/favourites")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((ids: string[]) => setFavourites(new Set(ids)))
-      .catch(() => {});
+    const p = loadPersonal();
+    setNotes(p.notes);
+    setFavourites(new Set(p.favourites));
     fetch("/api/places/approved")
       .then((r) => (r.ok ? r.json() : []))
       .then((rows: Place[]) => setUserPlaces(rows))
