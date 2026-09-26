@@ -24,25 +24,6 @@ export default function AlertsCard() {
   const [isIOSHint, setIsIOSHint] = useState(false);
   const [testMsg, setTestMsg] = useState("");
 
-  /** Send one test notification to this device's own subscription */
-  const sendTest = async () => {
-    setTestMsg("Sending test…");
-    try {
-      const endpoint = localStorage.getItem(LS_KEY);
-      if (!endpoint) throw new Error("no saved subscription — toggle alerts off and on");
-      const res = await fetch("/api/push/test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ endpoint }),
-      });
-      const j = await res.json();
-      if (!res.ok || !j.ok) throw new Error(j.error ?? `test failed (${res.status})`);
-      setTestMsg("✓ Test sent — check your notifications (can take a few seconds)");
-    } catch (e) {
-      setTestMsg(e instanceof Error ? e.message : "Test failed.");
-    }
-  };
-
   useEffect(() => {
     (async () => {
       try {
@@ -61,7 +42,15 @@ export default function AlertsCard() {
           setState("denied");
           return;
         }
-        const reg = await navigator.serviceWorker.ready;
+        // NB: getRegistration() returns null when no SW is registered yet —
+        // serviceWorker.ready would HANG forever on a fresh browser and the
+        // subscribe button would never appear (chicken-and-egg: the SW is
+        // only registered by this very button).
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (!reg) {
+          setState("off");
+          return;
+        }
         const existing = await reg.pushManager.getSubscription();
         const savedEndpoint = localStorage.getItem(LS_KEY);
         if (existing && savedEndpoint === existing.endpoint) setState("on");
@@ -134,53 +123,95 @@ export default function AlertsCard() {
     }
   };
 
+  /** Send one test notification to this device's own subscription */
+  const sendTest = async () => {
+    setTestMsg("Sending test…");
+    try {
+      const endpoint = localStorage.getItem(LS_KEY);
+      if (!endpoint) throw new Error("no saved subscription — toggle alerts off and on");
+      const res = await fetch("/api/push/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ endpoint }),
+      });
+      const j = await res.json();
+      if (!res.ok || !j.ok) throw new Error(j.error ?? `test failed (${res.status})`);
+      setTestMsg("✓ Test sent — check your notifications (can take a few seconds)");
+    } catch (e) {
+      setTestMsg(e instanceof Error ? e.message : "Test failed.");
+    }
+  };
+
+  const buttonShows = state === "checking" || state === "off" || state === "busy" || state === "denied";
+
   return (
     <div>
       <p className="mt-2 text-sm text-slate-300">
         One friendly morning brief — weather, tides, what&apos;s on, and your bin
         day. Free, no account, opt out anytime.
       </p>
-      {state === "checking" && (
-        <p className="mt-2 text-xs text-slate-500">…</p>
-      )}
-      {state === "unsupported" && (
-        <>
-          <p className="mt-2 text-xs text-slate-500">
-            This browser can&apos;t do push notifications — the rest of the app
-            works fine.
-          </p>
-          {isIOSHint && (
-            <p className="mt-2 text-[11px] text-slate-500">
-              On iPhone/iPad: tap <b>Share → Add to Home Screen</b>, then open
-              the app from your home screen — Apple only allows notifications
-              from the home-screen app, and this unlocks them.
-            </p>
-          )}
-        </>
-      )}
+
       {state === "denied" && (
         <p className="mt-2 text-xs text-amber-400">
-          Notifications are blocked in your browser settings — unblock for this
-          site, then tap enable again.
+          Notifications are blocked for this site in your browser settings —
+          unblock them (padlock icon in the address bar), then tap the button
+          again.
         </p>
       )}
-      {(state === "off" || state === "busy") && (
-        <>
-          <button
-            onClick={subscribe}
-            disabled={state === "busy"}
-            className="mt-3 w-full rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:opacity-50"
-          >
-            {state === "busy" ? "Enabling…" : "🔔 Get town alerts"}
-          </button>
-          {isIOSHint && (
-            <p className="mt-2 text-[11px] text-slate-500">
-              On iPhone/iPad: tap <b>Share → Add to Home Screen</b> first, then
-              open it from your home screen to enable alerts.
-            </p>
-          )}
-        </>
+
+      {buttonShows && (
+        <button
+          onClick={subscribe}
+          disabled={state === "busy" || state === "checking"}
+          className="mt-3 w-full rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:opacity-50"
+        >
+          {state === "busy"
+            ? "Enabling…"
+            : state === "checking"
+              ? "Checking alerts…"
+              : "🔔 Get town alerts"}
+        </button>
       )}
+
+      {isIOSHint && state !== "unsupported" && state !== "on" && (
+        <p className="mt-2 text-[11px] text-slate-500">
+          On iPhone/iPad: tap <b>Share → Add to Home Screen</b> first, then open
+          it from your home screen to enable alerts.
+        </p>
+      )}
+
+      {state === "unsupported" && (
+        <div className="mt-3 space-y-2">
+          <p className="text-xs text-slate-500">
+            This browser can&apos;t show push notifications yet — the rest of
+            the app works fine.
+          </p>
+          {isIOSHint && (
+            <div className="rounded-xl bg-sky-500/10 p-3 ring-1 ring-sky-500/30">
+              <p className="text-xs font-semibold text-sky-300">
+                iPhone/iPad — turn alerts on in 4 steps
+              </p>
+              <ol className="mt-1.5 list-decimal space-y-1 pl-4 text-xs text-slate-300">
+                <li>
+                  In Safari, tap <b>Share</b> (the square with an arrow ↑)
+                </li>
+                <li>
+                  Scroll down and tap <b>Add to Home Screen</b>
+                </li>
+                <li>Open GY Local from your home screen</li>
+                <li>
+                  Come back to this page and tap <b>🔔 Get town alerts</b>
+                </li>
+              </ol>
+              <p className="mt-1.5 text-[11px] text-slate-500">
+                Apple only allows notifications from home-screen apps — this is
+                the one-time unlock. Nothing is lost by adding it.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
       {state === "on" && (
         <div className="mt-3 space-y-2">
           <div className="flex items-center justify-between gap-2">

@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-26T20:34:26.915Z",
+  "fetchedAt": "2026-09-26T20:42:36.964Z",
   "items": [
     {
       "id": "CBMiqgFBVV95cUxNekY0d3VaMDJaQzcwRWtuM01GQm0xNWpTRmtDdjBpcGtXRDFxOUNlcWNpOWs1M0pEbUotTDFMNFp3MnlReVBMM1FiMkFPVzlES2xiS0Z3VGNDc2RHQ0lPX05xeVhjTTl2bVZpVFhMMlo1eDE1bW9hWTZScUZfcGhtSkxqOE93bWF1ci0xUGJ4MndCUjRSRlRvSjlTWno5TFNFSFZUY1k5Y0Jjdw",
@@ -272,14 +272,6 @@
       "source": "Great Yarmouth Mercury",
       "source_url": "https://www.greatyarmouthmercury.co.uk",
       "published": "2026-09-19T17:44:00.000Z"
-    },
-    {
-      "id": "CBMitAFBVV95cUxOT0Y2VjAzZmsxYUZ2T3k1dXIwci1KcDFfVHV1cFR0bjFNTnBrMDY0YWx4R1kzbDM4VzV5T3ByNkNDUFk1NWhwTWtpazlmZTZRd0w3RVNoenVkZFExa29RS3JkSmlqSVlCNVhRc0lkNmVEX1NicENCOWViQWJpS2o5b21pc3NNUkFpSG1kTnRTU3pPdy1qZDlZMVp4bWpDMEFhSUNVZmo3a0hRMEpIWDNwTjg3VWM",
-      "title": "An elegant new gallery and community facility in Great Yarmouth",
-      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOT0Y2VjAzZmsxYUZ2T3k1dXIwci1KcDFfVHV1cFR0bjFNTnBrMDY0YWx4R1kzbDM4VzV5T3ByNkNDUFk1NWhwTWtpazlmZTZRd0w3RVNoenVkZFExa29RS3JkSmlqSVlCNVhRc0lkNmVEX1NicENCOWViQWJpS2o5b21pc3NNUkFpSG1kTnRTU3pPdy1qZDlZMVp4bWpDMEFhSUNVZmo3a0hRMEpIWDNwTjg3VWM?oc=5",
-      "source": "East Anglia Bylines",
-      "source_url": "https://eastangliabylines.co.uk",
-      "published": "2026-09-19T17:32:58.000Z"
     },
     {
       "id": "CBMiowFBVV95cUxOQmJqcVAxSkJicG1BMjBIbU52ZGJabmpLMTdRelF4TTFDcGV1b2hjRUYwNURHTDJrX1lFR0ZmSXBBWFpvZDZWWTdJajA3WGNweG5FcFRqc3QwSi1yOUFkdWRwUWRYVUVVa2hjd2NHdWE3ek9MS0g2Y0hqY09FOXRSZFotRzRMRW9HR3RxTkFrU21uNEcyTzBLQ1pScm9sZ25scl9R",
@@ -800,6 +792,14 @@
       "source": "Norfolk Constabulary",
       "source_url": "https://www.norfolk.police.uk",
       "published": "2026-04-08T07:00:00.000Z"
+    },
+    {
+      "id": "CBMiWkFVX3lxTE41ZnppQjE5NUNaYnkzU2M3NUY5a3Q5a0U1RTVFbjZoZEZXZlRWSnNQbkdUcGc2Y0dmR0FGZWM2Umloczg4SFVQWFhtNHo3Mm1iWE9TQVZlbWFYQQ",
+      "title": "Great Yarmouth task force aims to make town centre more welcoming",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE41ZnppQjE5NUNaYnkzU2M3NUY5a3Q5a0U1RTVFbjZoZEZXZlRWSnNQbkdUcGc2Y0dmR0FGZWM2Umloczg4SFVQWFhtNHo3Mm1iWE9TQVZlbWFYQQ?oc=5",
+      "source": "BBC",
+      "source_url": "https://www.bbc.com",
+      "published": "2026-03-27T07:00:00.000Z"
     }
   ]
 }
