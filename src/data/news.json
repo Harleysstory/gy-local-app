@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-26T19:32:19.287Z",
+  "fetchedAt": "2026-09-26T19:48:29.492Z",
   "items": [
     {
       "id": "CBMiqgFBVV95cUxNekY0d3VaMDJaQzcwRWtuM01GQm0xNWpTRmtDdjBpcGtXRDFxOUNlcWNpOWs1M0pEbUotTDFMNFp3MnlReVBMM1FiMkFPVzlES2xiS0Z3VGNDc2RHQ0lPX05xeVhjTTl2bVZpVFhMMlo1eDE1bW9hWTZScUZfcGhtSkxqOE93bWF1ci0xUGJ4MndCUjRSRlRvSjlTWno5TFNFSFZUY1k5Y0Jjdw",
@@ -578,14 +578,6 @@
       "published": "2026-07-27T07:00:00.000Z"
     },
     {
-      "id": "CBMijgFBVV95cUxNS20zSkdLN1VHOGVMTzdpeVQxUnItUEhfU2hCalhta2FmNUFSNkNZS3lNYzhmenZ0MGVndTllVm9qaDVnRllfMXhndEhZNURiNUFERTlLT1p1UVhkY0IzRXF2ZkVJRnpfbmhMRzg3emFUM2w1emFvaEZDZTc2MnVjdU05NXVGMlVBRGNIOE13",
-      "title": "Why Great Yarmouth is one of Time Out’s top UK seaside towns to visit in 2026",
-      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNS20zSkdLN1VHOGVMTzdpeVQxUnItUEhfU2hCalhta2FmNUFSNkNZS3lNYzhmenZ0MGVndTllVm9qaDVnRllfMXhndEhZNURiNUFERTlLT1p1UVhkY0IzRXF2ZkVJRnpfbmhMRzg3emFUM2w1emFvaEZDZTc2MnVjdU05NXVGMlVBRGNIOE13?oc=5",
-      "source": "Time Out Worldwide",
-      "source_url": "https://www.timeout.com",
-      "published": "2026-07-24T07:00:00.000Z"
-    },
-    {
       "id": "CBMiWkFVX3lxTFBQOVc0QWR6OXZIZ0FkWWJheDk2M3NXcW5VT2FibUZLLUFhTC1sazNzR25jQzduOTV6MEVvVi1LWlVFZXY4WnJ0T25HUHgtRUNIWlJISGd5Q0ZLUQ",
       "title": "Robbery charges following man's death in Great Yarmouth dropped",
       "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBQOVc0QWR6OXZIZ0FkWWJheDk2M3NXcW5VT2FibUZLLUFhTC1sazNzR25jQzduOTV6MEVvVi1LWlVFZXY4WnJ0T25HUHgtRUNIWlJISGd5Q0ZLUQ?oc=5",
@@ -800,6 +792,14 @@
       "source": "BBC",
       "source_url": "https://www.bbc.co.uk",
       "published": "2026-04-16T07:00:00.000Z"
+    },
+    {
+      "id": "CBMirAFBVV95cUxNVFItNXF0VnlaUldGeTBlX0ZfTnFpQVdYeHRiYmF3ZkpXb28xb2lILTBQSHhPX244RGp5eUtocnk1QzdNTll6Vm9YZTRnZGQwdjZCTVNOQjNua3l2N003dTRFWWF5dExnem1nazVWTUlTblNiLTgxTl9Rb0ZXT1YwbXhCVjZpaHhoVGZQRU5VVHkweEdPN2xXcmZtRDJCRXhWMmt2SC05R3ZQVzdX",
+      "title": "Project Servator launches in Great Yarmouth",
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNVFItNXF0VnlaUldGeTBlX0ZfTnFpQVdYeHRiYmF3ZkpXb28xb2lILTBQSHhPX244RGp5eUtocnk1QzdNTll6Vm9YZTRnZGQwdjZCTVNOQjNua3l2N003dTRFWWF5dExnem1nazVWTUlTblNiLTgxTl9Rb0ZXT1YwbXhCVjZpaHhoVGZQRU5VVHkweEdPN2xXcmZtRDJCRXhWMmt2SC05R3ZQVzdX?oc=5",
+      "source": "Norfolk Constabulary",
+      "source_url": "https://www.norfolk.police.uk",
+      "published": "2026-04-08T07:00:00.000Z"
     }
   ]
 }

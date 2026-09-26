@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="en-GB">
       <body className="min-h-screen antialiased">
         <header className="sticky top-0 z-50 border-b border-slate-800/70 bg-slate-950/70 backdrop-blur-md">
-          <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
+          <div className="mx-auto flex max-w-4xl flex-col items-center gap-2 px-4 py-3 sm:flex-row sm:justify-between">
             <Link href="/" className="flex items-center gap-2.5">
               {/* Great Yarmouth outline mark (Harley's design) — same art as
                   the favicon & install icon */}
@@ -42,12 +42,12 @@ export default function RootLayout({
                 GY<span className="text-sky-400">Local</span>
               </span>
             </Link>
-            <nav className="flex gap-1">
+            <nav className="flex flex-wrap justify-center gap-1">
               {NAV.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
-                  className="rounded-lg px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800/80 hover:text-white"
+                  className="rounded-lg px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-slate-800/80 hover:text-white sm:px-3 sm:text-sm"
                 >
                   {label}
                 </Link>
