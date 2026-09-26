@@ -74,6 +74,9 @@ export default async function PlacePage({
                 style={{ background: color }}
               />
               {emoji} {p.category}
+              {p.subcategory ? (
+                <span className="text-slate-500"> · {p.subcategory}</span>
+              ) : null}
             </div>
           </div>
           <a

@@ -98,6 +98,49 @@ function categoryFor(props) {
   return "Other";
 }
 
+// ---- Subsections: what a place is INSIDE its category ----
+
+function humanizeTag(tag) {
+  const specials = { atm: "ATM", gym: "gym" };
+  if (specials[tag]) return specials[tag];
+  return tag.replace(/_/g, " "); // bank_or_credit_union -> "bank or credit union"
+}
+
+// UK trade keywords for the many quality POIs Overture leaves untagged
+// (plumbers, decorators, skip hire...). Matched against the name.
+const TRADE_KEYWORDS = [
+  ["plumb", "plumber"], ["electric", "electrician"],
+  ["skip", "skip hire"], ["builder", "builder"],
+  ["roof", "roofer"], ["plaster", "plasterer"],
+  ["painter", "painter & decorator"], ["decorator", "painter & decorator"],
+  ["handyman", "handyman"], ["carpent", "carpenter"], ["joiner", "carpenter"],
+  ["window", "windows & conservatories"], ["conservator", "windows & conservatories"],
+  ["glaz", "glazier"], ["heating", "heating engineer"], ["gas safe", "heating engineer"],
+  ["garden", "gardener"], ["landscape", "gardener"], ["tree surgeon", "tree surgeon"],
+  ["clean", "cleaning"], ["storage", "self storage"],
+  ["photograph", "photographer"], ["photo", "photographer"],
+  ["tattoo", "tattoo studio"], ["barber", "barber"],
+  ["beauty", "beauty salon"], ["nail", "nail salon"], ["hair", "hair salon"],
+  ["physio", "physiotherapy"], ["chiropract", "chiropractor"], ["osteopath", "osteopath"],
+  ["driving school", "driving school"], ["taxi", "taxi"],
+  ["mot ", "garage & MOT"], ["tyre", "garage & MOT"], ["exhaust", "garage & MOT"],
+  ["recovery", "vehicle recovery"], ["towing", "vehicle recovery"],
+  ["caravan", "caravan site"], ["estate agent", "estate agent"], ["letting", "estate agent"],
+  ["account", "accountant"], ["solicitor", "solicitor"], ["law ", "solicitor"],
+  ["survey", "surveyor"], ["print", "printing"], ["security", "security"],
+  ["alarm", "security"], ["cctv", "security"], ["pest", "pest control"],
+  ["funeral", "funeral services"], ["laundry", "laundry"], ["launderette", "laundry"],
+  ["coach", "coach & travel"],
+];
+
+function deriveSubcategory(name) {
+  const n = ` ${name.toLowerCase()} `;
+  for (const [kw, sub] of TRADE_KEYWORDS) {
+    if (n.includes(kw)) return sub;
+  }
+  return null;
+}
+
 function formatAddress(addr) {
   if (!addr) return null;
   const parts = [addr.freeform, addr.locality, addr.postcode].filter(Boolean);
@@ -179,6 +222,7 @@ for (const file of files) {
       id,
       name: p.names?.primary ?? p.name ?? "Unnamed",
       category,
+      subcategory: p.basic_category ? humanizeTag(p.basic_category) : deriveSubcategory(p.names?.primary ?? p.name ?? ""),
       lat,
       lon,
       address: formatAddress(p.addresses?.[0]),

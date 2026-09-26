@@ -2,6 +2,7 @@ export type Place = {
   id: string;
   name: string;
   category: string;
+  subcategory?: string | null; // what it is inside the category (e.g. Other · gym)
   lat: number;
   lon: number;
   address?: string | null;

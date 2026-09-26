@@ -35,6 +35,9 @@ export default function MapView({ places }: { places: Place[] }) {
             )}
             <br />
             {p.category}
+            {p.subcategory ? (
+              <span style={{ fontSize: 12 }}> · {p.subcategory}</span>
+            ) : null}
             {p.source === "manual" ? (
               <span style={{ color: "#f59e0b", fontSize: 12 }}> · yours ⭐</span>
             ) : null}

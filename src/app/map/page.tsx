@@ -20,6 +20,7 @@ const LIST_CAP = 60; // keep the DOM list light; the map shows everything
 
 export default function MapPage() {
   const [selected, setSelected] = useState<string | null>(null); // null = all
+  const [subSelected, setSubSelected] = useState<string | null>(null); // inside Other
   const [search, setSearch] = useState("");
   const [notes, setNotes] = useState<Record<string, PersonalNote>>({});
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
@@ -44,9 +45,24 @@ export default function MapPage() {
     return all.filter(
       (p) =>
         (selected === null || p.category === selected) &&
+        (selected !== "Other" ||
+          subSelected === null ||
+          (p.subcategory ?? "(none)") === subSelected) &&
         (q === "" || p.name.toLowerCase().includes(q))
     );
-  }, [selected, search, all]);
+  }, [selected, subSelected, search, all]);
+
+  // Subsection chips — shown when you're inside the "Other" category
+  const subChips = useMemo(() => {
+    if (selected !== "Other") return [];
+    const m = new Map<string, number>();
+    for (const p of all) {
+      if (p.category !== "Other") continue;
+      const k = p.subcategory ?? "(none)";
+      m.set(k, (m.get(k) ?? 0) + 1);
+    }
+    return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 14);
+  }, [selected, all]);
 
   const merged: Place[] = useMemo(
     () =>
@@ -88,7 +104,7 @@ export default function MapPage() {
       {/* Category chips — legend + filter in one */}
       <div className="flex flex-wrap gap-2">
         <button
-          onClick={() => setSelected(null)}
+          onClick={() => { setSelected(null); setSubSelected(null); }}
           className={`rounded-full px-3 py-1 text-xs font-medium ring-1 transition ${
             selected === null
               ? "bg-sky-600 text-white ring-sky-600"
@@ -103,7 +119,10 @@ export default function MapPage() {
           return (
             <button
               key={category}
-              onClick={() => setSelected(active ? null : category)}
+              onClick={() => {
+                setSelected(active ? null : category);
+                setSubSelected(null);
+              }}
               className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 transition ${
                 active
                   ? "text-white ring-white/40"
@@ -120,6 +139,35 @@ export default function MapPage() {
           );
         })}
       </div>
+
+      {/* Subsection chips — inside "Other" */}
+      {subChips.length > 0 && (
+        <div className="-mt-1 flex flex-wrap gap-1.5">
+          <button
+            onClick={() => setSubSelected(null)}
+            className={`rounded-full px-2.5 py-0.5 text-[11px] ring-1 transition ${
+              subSelected === null
+                ? "bg-slate-200 text-slate-900 ring-slate-200"
+                : "bg-slate-900 text-slate-400 ring-slate-800 hover:text-white"
+            }`}
+          >
+            All Others
+          </button>
+          {subChips.map(([sub, n]) => (
+            <button
+              key={sub}
+              onClick={() => setSubSelected(subSelected === sub ? null : sub)}
+              className={`rounded-full px-2.5 py-0.5 text-[11px] ring-1 transition ${
+                subSelected === sub
+                  ? "bg-slate-200 text-slate-900 ring-slate-200"
+                  : "bg-slate-900 text-slate-400 ring-slate-800 hover:text-white"
+              }`}
+            >
+              {sub} · {n}
+            </button>
+          ))}
+        </div>
+      )}
 
       <MapView places={merged} />
 
@@ -162,6 +210,9 @@ export default function MapPage() {
                   </div>
                   <div className="text-xs text-slate-400">
                     {emoji} {p.category}
+                    {p.subcategory ? (
+                      <span className="text-slate-500"> · {p.subcategory}</span>
+                    ) : null}
                   </div>
                 </div>
               </Link>
