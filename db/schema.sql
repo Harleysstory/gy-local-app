@@ -85,6 +85,14 @@ CREATE TABLE IF NOT EXISTS settings (        -- shared app state (tides cache, r
   value TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS push_subscriptions ( -- browser push subscribers (opt-in alerts)
+  endpoint TEXT PRIMARY KEY,        -- unique browser push endpoint
+  subscription TEXT NOT NULL,       -- full subscription JSON from the browser
+  bin_config TEXT,                  -- optional local bin pattern (JSON, given at subscribe)
+  failure_count INTEGER DEFAULT 0, -- dead-endpoint hygiene (auto-remove after repeated failures)
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS messages (        -- contact form: enquiries, reports, suggestions
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT,                       -- optional

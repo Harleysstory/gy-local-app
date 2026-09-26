@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BinDayCard from "@/components/BinDayCard";
+import AlertsCard from "@/components/AlertsCard";
 import { places } from "@/lib/places";
 import { getWeather } from "@/lib/weather";
 import { getTides, upcomingExtremes, londonTime } from "@/lib/tides";
@@ -99,7 +100,7 @@ export default async function Home() {
       </a>
 
       {/* ─── Dashboard cards ─── */}
-      <section className="grid gap-4 sm:grid-cols-3">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl bg-slate-900 p-5 ring-1 ring-slate-800">
           <h2 className="font-semibold">🌊 Tides</h2>
           {tides.ok && next.length > 0 ? (
@@ -143,6 +144,11 @@ export default async function Home() {
         <div className="rounded-2xl bg-slate-900 p-5 ring-1 ring-slate-800">
           <h2 className="font-semibold">🗑️ Bin day</h2>
           <BinDayCard />
+        </div>
+
+        <div className="rounded-2xl bg-slate-900 p-5 ring-1 ring-slate-800">
+          <h2 className="font-semibold">🔔 Town alerts</h2>
+          <AlertsCard />
         </div>
 
         <div className="rounded-2xl bg-slate-900 p-5 ring-1 ring-slate-800">

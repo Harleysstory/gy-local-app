@@ -495,9 +495,33 @@ export default function AdminDashboard() {
         >
           {busy === "refresh" ? "Triggering…" : "🔄 Refresh data now"}
         </button>
-        <p className="text-xs text-slate-400">
-          Events &amp; news are scraped at build time, and the Vercel cron
-          refreshes them every morning automatically (max once per 6h).
+        <button
+          onClick={async () => {
+            setBusy("brief");
+            try {
+              const r = await fetch("/api/push/brief?force=1");
+              const j = await r.json();
+              setRefreshMsg(
+                j.ok
+                  ? `Brief sent to ${j.sent} of ${j.subscribers} subscriber${j.subscribers === 1 ? "" : "s"}${j.failed ? ` (${j.failed} failed)` : ""}`
+                  : j.error ?? "Could not send."
+              );
+            } catch {
+              setRefreshMsg("Could not send brief.");
+            } finally {
+              setBusy("");
+              setTimeout(() => setRefreshMsg(""), 8000);
+            }
+          }}
+          disabled={busy === "brief"}
+          className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500 disabled:opacity-50"
+        >
+          {busy === "brief" ? "Sending…" : "🔔 Send town brief now"}
+        </button>
+        <p className="max-w-md text-xs text-slate-400">
+          Data refreshes every morning at 06:20 UTC (scraped at build time);
+          the town brief goes to push subscribers at 06:30 UTC — or force it
+          here to test.
         </p>
         {refreshMsg && (
           <span className="text-xs text-sky-400">{refreshMsg}</span>
