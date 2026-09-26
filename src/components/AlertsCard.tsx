@@ -22,6 +22,26 @@ export default function AlertsCard() {
   const [state, setState] = useState<State>("checking");
   const [error, setError] = useState("");
   const [isIOSHint, setIsIOSHint] = useState(false);
+  const [testMsg, setTestMsg] = useState("");
+
+  /** Send one test notification to this device's own subscription */
+  const sendTest = async () => {
+    setTestMsg("Sending test…");
+    try {
+      const endpoint = localStorage.getItem(LS_KEY);
+      if (!endpoint) throw new Error("no saved subscription — toggle alerts off and on");
+      const res = await fetch("/api/push/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ endpoint }),
+      });
+      const j = await res.json();
+      if (!res.ok || !j.ok) throw new Error(j.error ?? `test failed (${res.status})`);
+      setTestMsg("✓ Test sent — check your notifications (can take a few seconds)");
+    } catch (e) {
+      setTestMsg(e instanceof Error ? e.message : "Test failed.");
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -124,10 +144,19 @@ export default function AlertsCard() {
         <p className="mt-2 text-xs text-slate-500">…</p>
       )}
       {state === "unsupported" && (
-        <p className="mt-2 text-xs text-slate-500">
-          This browser can&apos;t do push notifications — the rest of the app
-          works fine.
-        </p>
+        <>
+          <p className="mt-2 text-xs text-slate-500">
+            This browser can&apos;t do push notifications — the rest of the app
+            works fine.
+          </p>
+          {isIOSHint && (
+            <p className="mt-2 text-[11px] text-slate-500">
+              On iPhone/iPad: tap <b>Share → Add to Home Screen</b>, then open
+              the app from your home screen — Apple only allows notifications
+              from the home-screen app, and this unlocks them.
+            </p>
+          )}
+        </>
       )}
       {state === "denied" && (
         <p className="mt-2 text-xs text-amber-400">
@@ -153,18 +182,27 @@ export default function AlertsCard() {
         </>
       )}
       {state === "on" && (
-        <div className="mt-3 flex items-center justify-between gap-2">
-          <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-300 ring-1 ring-emerald-500/30">
-            ✓ Alerts on — brief arrives ~7:30am
-          </span>
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-300 ring-1 ring-emerald-500/30">
+              ✓ Alerts on — brief arrives ~7:30am
+            </span>
+            <button
+              onClick={unsubscribe}
+              className="text-xs text-slate-500 hover:text-slate-300"
+            >
+              turn off
+            </button>
+          </div>
           <button
-            onClick={unsubscribe}
-            className="text-xs text-slate-500 hover:text-slate-300"
+            onClick={sendTest}
+            className="text-xs text-sky-400 underline hover:text-sky-300"
           >
-            turn off
+            Send a test notification to this device
           </button>
         </div>
       )}
+      {testMsg && <p className="mt-2 text-xs text-slate-400">{testMsg}</p>}
       {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
     </div>
   );

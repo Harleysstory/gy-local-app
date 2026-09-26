@@ -508,7 +508,9 @@ export default function AdminDashboard() {
               const j = await r.json();
               setRefreshMsg(
                 j.ok
-                  ? `Brief sent to ${j.sent} of ${j.subscribers} subscriber${j.subscribers === 1 ? "" : "s"}${j.failed ? ` (${j.failed} failed)` : ""}`
+                  ? j.subscribers === 0
+                    ? "No subscribers yet — open the app on your phone, tap 🔔 Get town alerts, then send again."
+                    : `Brief sent to ${j.sent} of ${j.subscribers} subscriber${j.subscribers === 1 ? "" : "s"}${j.failed ? ` (${j.failed} failed)` : ""}`
                   : j.error ?? "Could not send."
               );
             } catch {
