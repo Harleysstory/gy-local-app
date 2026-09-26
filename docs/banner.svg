@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-label="GY Local — everything Great Yarmouth">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1120"/>
+      <stop offset="1" stop-color="#101b31"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0" r="1">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="220" rx="24" fill="url(#bg)"/>
+  <rect width="800" height="220" rx="24" fill="url(#glow)"/>
+
+  <!-- text -->
+  <text x="56" y="96" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="52" font-weight="800" fill="#e2e8f0">
+    GY <tspan fill="#38bdf8">Local</tspan>
+  </text>
+  <text x="56" y="134" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="19" fill="#94a3b8">
+    Everything local, for one seaside town
+  </text>
+  <text x="56" y="166" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#fbbf24" opacity="0.9">
+    Great Yarmouth · proudly sponsored by Bradford Independent
+  </text>
+
+  <!-- Great Yarmouth seafront scene (right) -->
+  <g>
+    <!-- sun -->
+    <circle cx="676" cy="52" r="16" fill="#fbbf24"/>
+    <!-- seagulls -->
+    <path d="M576 64q9-10 18 0M604 50q9-10 18 0" fill="none" stroke="#94a3b8" stroke-width="2.6" stroke-linecap="round"/>
+    <!-- St Nicholas Minster -->
+    <g fill="#475569">
+      <path d="M548 92h26v38h-26z"/>
+      <path d="M548 80h7v12h-7zM557 76h7v16h-7zM566 80h7v12h-7z"/>
+      <path d="M574 110h26v20H574z"/>
+      <path d="M574 110l13-10 13 10z"/>
+    </g>
+    <!-- Britannia Pier -->
+    <path d="M568 132h92v8h-92z" fill="#94a3b8"/>
+    <path d="M586 140h7v20h-7zM640 140h7v20h-7z" fill="#64748b"/>
+    <path d="M616 112h38v20h-38z" fill="#cbd5e1"/>
+    <path d="M616 112h38v6h-38z" fill="#94a3b8"/>
+    <path d="M650 94v18" stroke="#94a3b8" stroke-width="3"/>
+    <path d="M650 94l16 6-16 6z" fill="#fbbf24"/>
+    <!-- the sea -->
+    <path d="M520 170c24-9 48 9 72 0s48 9 72 0c18-6.6 28 7.4 36 0v50H520Z" fill="url(#sea)" opacity="0.92"/>
+  </g>
+</svg>

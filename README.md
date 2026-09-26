@@ -1,209 +1,112 @@
-# GY Local — Great Yarmouth personal app
+<div align="center">
 
-Your personal "local everything" app for Great Yarmouth: places, map, live
-weather, and (soon) events, bus departures, and local news. Built with
-Next.js + Tailwind + Leaflet, all free tooling, £0/month.
+<img src="docs/banner.svg" alt="GY Local — everything Great Yarmouth" width="800"/>
 
-Companion docs (in the same workspace as this project):
-- `great-yarmouth-data-sources.md` — where every data source comes from
-- `local-everything-next-steps.md` — the phased build plan
-- `local-everything-personal-blueprint.md` — the overall design
+**The everything-local app for one English seaside town** — places, events, news, tides, weather and the bin day, for Great Yarmouth. Built by someone who lives there.
+
+[![Live on Vercel](https://img.shields.io/badge/live-gy--local.app-38bdf8?style=flat-square)](https://gy-local-app-bradford-independent.vercel.app)
+[![Next.js 15](https://img.shields.io/badge/Next.js-15-0b1120?style=flat-square&labelColor=131c2e)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&labelColor=131c2e)]()
+[![Turso](https://img.shields.io/badge/Turso-libSQL-e2e8f0?style=flat-square&labelColor=131c2e)]()
+[![Runs on £0/month](https://img.shields.io/badge/cost-%C2%A30%2Fmonth-34d399?style=flat-square&labelColor=131c2e)]()
+
+**[Live app →](https://gy-local-app-bradford-independent.vercel.app)** · [Report a problem](https://gy-local-app-bradford-independent.vercel.app/contact?type=report) · [Suggest something](https://gy-local-app-bradford-independent.vercel.app/contact?type=suggestion)
+
+</div>
 
 ---
 
-## 1. One-time setup (do this first, ~10 minutes)
+## What's inside
 
-You need three things installed: **Node.js**, **VS Code**, and (recommended)
-**Git**.
-
-**Option A — winget (Windows 10/11 has it built in).** Open PowerShell and run:
-
-```powershell
-winget install OpenJS.NodeJS.LTS
-winget install Microsoft.VisualStudioCode
-winget install Git.Git
-```
-
-**Option B — download and install manually:**
-- Node.js LTS → https://nodejs.org
-- VS Code → https://code.visualstudio.com
-- Git → https://git-scm.com
-
-> ⚠️ **Two gotchas you will absolutely hit (already confirmed on this machine):**
->
-> 1. After installing, **close and reopen VS Code / your terminal** so the
->    `node` command is found. Verify with: `node --version`
-> 2. PowerShell blocks npm by default with the error
->    *"npm.ps1 cannot be loaded because running scripts is disabled on this
->    system"*. Fix it once and for all by running this in PowerShell:
->
->    ```powershell
->    Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
->    ```
->
->    (Safe, Microsoft-recommended developer setting — your user account only.)
-
-## 2. Open the project in VS Code
-
-```powershell
-code gy-local-app
-```
-
-(or VS Code → File → Open Folder → select `gy-local-app`)
-
-Recommended VS Code extensions ( Extensions panel, Ctrl+Shift+X ):
-- **ESLint** and **Prettier** (auto-formatting)
-- **Tailwind CSS IntelliSense** (class autocomplete)
-
-## 3. Run it
-
-In VS Code's built-in terminal ( Ctrl+` ):
-
-```powershell
-npm install     # first time only — downloads dependencies
-npm run dev     # starts the dev server
-```
-
-Open **http://localhost:3000** in your browser.
-
-**What you should see:**
-- Home: live Great Yarmouth weather (from Open-Meteo), sample places, feature roadmap cards
-- `/map` (click **Map** in the header): Leaflet map of Yarmouth with pins
-
-**Make it feel like an app on your phone:** open `http://<your-pc-ip>:3000`
-on your phone (same Wi-Fi), or once deployed (§6), open the site in your
-phone's browser → "Add to Home Screen". That's the PWA done — no app store.
-
-## 4. Project structure
-
-```
-gy-local-app/
-├── src/app/
-│   ├── page.tsx          Home — weather + places (live already)
-│   ├── map/page.tsx      Map page
-│   └── layout.tsx        Header, footer, attribution
-├── src/components/
-│   └── MapView.tsx       Leaflet map (client-only)
-├── src/lib/
-│   └── places.ts         PLACEHOLDER data — swap after import (below)
-├── src/data/             Output folder for the import scripts
-├── scripts/
-│   ├── import-overture.mjs   Filter your Overture download → places JSON
-│   ├── scrape-events.mjs      Visit Great Yarmouth calendar → events JSON
-│   └── filter-gtfs.mjs        BODS national GTFS → local transit JSON
-├── db/schema.sql         Database schema for when you add Turso/D1 (§5)
-└── package.json
-```
-
-## 5. What to build next (in this order)
-
-Each is a 1–3 evening job once the steps below are done:
-
-1. **Real places.** Filter your Overture download to Yarmouth:
-   `node scripts/import-overture.mjs path\to\your-overture-download.geojson`
-   then edit `src/lib/places.ts` to load `src/data/imported-places.json`
-   (change the `import` and delete the sample array).
-2. **Events.** Fill in `DATE_SELECTOR` in `scripts/scrape-events.mjs`
-   (one session with the browser inspector), then wire
-   `src/data/events.json` into an Events page modelled on the Home page.
-3. **Database.** ✅ DONE (26 Sep 2026) — Turso is live:
-   `gy-local-harleysstory.aws-eu-west-1.turso.io`, schema applied, notes &
-   favourites tested end-to-end.
-
-   Setup notes if you ever redo it:
-   - Sign up at https://app.turso.tech (GitHub, free), create DB `gy-local`,
-     put `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN` in `.env.local`
-     (git-ignored — never commit it)
-   - `npm install @libsql/client` — but on **Windows ARM64** the native
-     libsql binary doesn't exist; use the pure-JS web client instead:
-     `import { createClient } from "@libsql/client/web"` (already done in
-     `src/lib/db.ts` and `scripts/apply-schema.mjs`)
-   - `node scripts/apply-schema.mjs` applies `db/schema.sql`
-   - World data (places/events/news) deliberately lives in `src/data/*.json`
-     — the DB is only for YOUR data (notes, favourites, saved items), so
-     re-running imports can never overwrite your notes
-4. **News.** ✅ DONE — `npm run import:news` fetches the Google News RSS
-   feed for great_yarmouth live; read-tracking in the browser.
-5. **Dashboard batch.** ✅ DONE (26 Sep 2026) — the home page is now a
-   "Today in Yarmouth" dashboard:
-   - Rain nowcast (Open-Meteo `minutely_15`): "rain easing around 14:20"
-   - Sunrise/sunset + golden hour, with a low-tide-near-sunset beach-walk
-     alert
-   - Tides (Stormglass `/v2/tide/extremes/point`, free tier) — fetch cached
-     6h server-side, so ≤4 of the 10 free daily requests are ever used;
-     `STORMGLASS_API_KEY` lives in `.env.local`
-   - Bin day helper: GYBC pattern is black/green alternate weekly — set up
-     once via the card (stored in the `settings` table), then it computes
-     "which bin tonight" forever
-6. **Buses (DEFERRED — decided 26 Sep 2026).** The filter script and schema
-   are ready (`npm run import:gtfs`); revive when you have a BODS account
-   (https://data.bus-data.dft.gov.uk/, free key). Not a priority.
-
-## 6. Putting it online (free, when you're ready)
-
-**Easiest — Vercel (DONE, 26 Sep 2026):** the app is LIVE at
-**https://gy-local-app-bradford-independent.vercel.app**
-(account: harleysstory, project: gy-local-app, team: bradford-independent;
-the 4 secrets are set as Vercel Production env vars)
-
-Redeploying after local changes / data refreshes:
-
-```powershell
-npm run scrape:events   # etc. — refresh the src/data files first
-vercel --prod          # uploads and rebuilds
-```
-
-Deploy notes for posterity:
-- New Hobby accounts default to Vercel Authentication (SSO) on ALL urls —
-  it was disabled via the API (`ssoProtection: null` on the project), which
-  is why the site is public
-- The deployment-specific url (gy-local-<hash>…vercel.app) stays SSO-walled
-  by design (that's Vercel protecting preview-like URLs) — always share the
-  production alias
-- First deploy: `npm install -g vercel`, `vercel login`, `vercel link --yes`,
-  `vercel env add NAME production` for each secret, `vercel deploy --prod`
-
-Your app is live in ~2 minutes on a `*.vercel.app` URL. Push to GitHub and it
-redeploys automatically. Note: for server-side state (notes, favourites)
-you'll want the Turso DB from §5, since Vercel has no local disk.
-
-**Alternative — Cloudflare** (matches the original long-term plan: Pages +
-Workers + D1). Uses `@opennextjs/cloudflare`; do it when you want D1 as the
-DB. Slightly more setup, same £0.
-
-**Auth & the two sides of the app (26 Sep 2026):**
-- **Client side (public):** home, map, events, news, place details, add-place
-  submissions. Visitors need no account — they browse freely. They can see
-  your ratings/notes (recommendations) and submit places, which wait in the
-  approval queue.
-- **Admin side (owner only):** `/login` → password (`ADMIN_PASSWORD` in
-  `.env.local`) → sets a 30-day HttpOnly session cookie → `/admin` dashboard
-  (stats, approvals, notes/favourites management, sign-out).
-- Writes to YOUR data (notes, favourites, bin config, approvals) require the
-  session cookie; every admin API also still accepts the `x-admin-key` header
-  for scripts.
-- Gotcha for local testing: the session cookie must not be `Secure` over
-  http://localhost — login checks `x-forwarded-proto`, so it works locally
-  and is `Secure` automatically once deployed to https (Vercel).
-
-## 7. Troubleshooting
-
-| Problem | Fix |
+| | Feature |
 |---|---|
-| `node` / `npm` not recognized | Terminal/VS Code predates the Node install — close VS Code **completely** and reopen |
-| `npm.ps1 cannot be loaded… scripts is disabled` | One-time fix: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` (see §1). Workaround in the meantime: run `npm.cmd` instead of `npm` |
-| `npm install` slow / fails | Retry; check proxy/antivirus isn't blocking npm |
-| Map is blank | Leaflet CSS missed the build — restart `npm run dev` |
-| Weather section says "unavailable" | No internet or Open-Meteo temporarily down — rest of app unaffected |
-| Port 3000 busy | A production preview server may still be running — stop it with `taskkill /IM node.exe /F` — or use `npm run dev -- -p 3001` |
+| 🗺️ | **A map of 2,184 places** across Yarmouth & Gorleston — every business/POI from Overture Maps, colour-coded by industry, searchable, with filters |
+| ⭐ | **Your own layer** — ratings, tags and notes on any place, favourites, and places *you* add that Overture missed (submitted → approved → pinned with a star) |
+| 🗓️ | **What's on** — events scraped from Visit Great Yarmouth, grouped by Today / This weekend / Coming up, with one-tap `.ics` calendar downloads |
+| 📰 | **Local news** — ~100 articles from the Mercury, EDP24, BBC and 20+ outlets, with read-tracking |
+| 🌊 | **A town dashboard** — live weather + rain nowcast ("easing around 14:20"), seafront tides, sunset & golden hour (with a low-tide-near-sunset beach-walk alert), and a bin-day helper that knows the black/green alternation |
+| 📬 | **Contact** — enquiries, reports and suggestions email the owner *and* land in an admin inbox |
+| 🔐 | **Two sides** — visitors browse freely; the owner signs in for the dashboard (stats, approvals, messages, data management) |
 
-**Status as of 26 Sep 2026:** setup done (Node 24.19.0 installed), the
-execution-policy fix applied in the Bionic session shell, dependencies
-installed, production build verified green, and the app confirmed serving
-with live weather and the places grid rendering.
+## It updates itself
+
+```
+   06:20 every morning (Vercel cron)
+        ↓
+   /api/refresh  — rate-limited, max once per 6h
+        ↓
+   deploy hook → fresh build
+        ↓
+   prebuild scrapes Visit GY events + imports 100 news articles
+        ↓ (if a source is down? yesterday's data, build never breaks)
+   new deployment goes live
+```
+
+No human in the loop. Tides and weather are fetched live at request time (cached — the whole stack stays inside every free tier).
+
+## Where the data comes from
+
+| Data | Source | Licence note |
+|---|---|---|
+| Places & POIs | [Overture Maps](https://overturemaps.org/) | CDLA-Permissive |
+| Map tiles & routing | [OpenStreetMap](https://www.openstreetmap.org/copyright) | ODbL, attribution required |
+| Events | [Visit Great Yarmouth](https://www.visitgreatyarmouth.co.uk/whats-on/events-calendar) | scraped gently — 1 fetch/day, links back |
+| News | Google News RSS for `great_yarmouth` | personal, non-commercial reader use |
+| Tides | [Stormglass.io](https://stormglass.io) | free tier |
+| Weather & rain | [Open-Meteo](https://open-meteo.com/) | CC BY 4.0 |
+| Your data | Turso (libSQL), region `aws-eu-west-1` | notes/favourites/submissions/messages |
+
+## Built with
+
+**Next.js 15 · React 19 · Tailwind CSS · Leaflet · Turso (`@libsql/client/web`) · Vercel (hosting + cron) · cheerio scrapers**
+
+One rule held throughout: **every dependency must have a viable free tier.** The result is a deployed, self-updating, database-backed app for **£0/month**.
+
+## Run one for your own town
+
+This isn't just an app — it's a **pattern**: one town, open data, free infrastructure, one maintainer. To fork it for somewhere else:
+
+```bash
+git clone https://github.com/Harleysstory/gy-local-app.git
+cd gy-local-app && npm install
+
+# 1. Free accounts: Turso (database) + Stormglass (tides, if you're coastal)
+#    Create .env.local with TURSO_DATABASE_URL, TURSO_AUTH_TOKEN,
+#    STORMGLASS_API_KEY, ADMIN_PASSWORD
+node scripts/apply-schema.mjs            # 2. create the tables
+node scripts/import-overture.mjs <geojson>  # 3. your town's places (Overture / OSM)
+node scripts/scrape-events.mjs           # 4. point the scraper at YOUR events site
+npm run dev                              # 5. → http://localhost:3000
+```
+
+Then swap the constants in `src/lib/` (town centre, bounding box, category map) and the news feed URL in `scripts/import-news.mjs`. Deploy free with `vercel`. The full ops runbook — Windows ARM64 notes, deploy gotchas, every command — lives in **[DEV.md](DEV.md)**.
+
+## Project layout
+
+```
+src/app/          pages: /, /map, /place/[id], /events, /news, /contact, /login, /admin
+src/lib/          towns constants, pins, auth, weather/tides/bins logic, Turso client
+src/components/   map views, picker, cards, admin dashboard
+scripts/          overture import · event scraper · news importer · GTFS filter (buses, parked)
+db/schema.sql     notes, favourites, manual places (approval queue), messages, settings
+docs/             banner + assets
+```
+
+## Roadmap
+
+- 🚌 **Buses** — BODS GTFS feed is spec'd and the filter script is ready; waiting on a free API key
+- 📷 Seafront webcams · 💾 one-click data export · 🗂️ saved deals & links
+- The honest roadmap: whatever real daily use asks for next
 
 ---
 
-**Remember the habit:** one small thing deployed each session beats a big
-perfect build. Check off §5's list in order, and use
-`great-yarmouth-data-sources.md` whenever a source needs details.
+<div align="center">
+
+### About
+
+Built in Great Yarmouth by **[Harley Bradford](https://www.bradfordindependent.com)** —
+**[Bradford Independent](https://www.bradfordindependent.com)** · business analysis, service design & UX
+
+*Code: MIT (see [LICENSE](LICENSE)). Data belongs to its sources — see the credits table.*
+
+</div>
