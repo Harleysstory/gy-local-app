@@ -4,13 +4,13 @@
 
 **The everything-local app for one English seaside town** — places, events, news, tides, weather, the bin day and a morning brief that lands on your phone. Built by someone who lives there.
 
-[![Live on Vercel](https://img.shields.io/badge/live-gy--local.app-38bdf8?style=flat-square)](https://gy-local-app-bradford-independent.vercel.app)
+[![Live on Vercel](https://img.shields.io/badge/live-gy--local.app-38bdf8?style=flat-square)](https://gy-local-app.vercel.app)
 [![Next.js 15](https://img.shields.io/badge/Next.js-15-0b1120?style=flat-square&labelColor=131c2e)]()
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&labelColor=131c2e)]()
 [![Turso](https://img.shields.io/badge/Turso-libSQL-e2e8f0?style=flat-square&labelColor=131c2e)]()
 [![Runs on £0/month](https://img.shields.io/badge/cost-%C2%A30%2Fmonth-34d399?style=flat-square&labelColor=131c2e)]()
 
-**[Live app →](https://gy-local-app-bradford-independent.vercel.app)** · [Report a problem](https://gy-local-app-bradford-independent.vercel.app/contact?type=report) · [Suggest something](https://gy-local-app-bradford-independent.vercel.app/contact?type=suggestion)
+**[Live app →](https://gy-local-app.vercel.app)** · [Report a problem](https://gy-local-app.vercel.app/contact?type=report) · [Suggest something](https://gy-local-app.vercel.app/contact?type=suggestion)
 
 </div>
 
